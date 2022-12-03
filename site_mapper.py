@@ -1,15 +1,15 @@
 import argparse
 import os
+import re
 import sys
 from datetime import datetime
 from typing import List
 from urllib.error import HTTPError
 from urllib.parse import urlparse
+from urllib.request import Request, urlopen
 
 import xmltodict
 from bs4 import BeautifulSoup
-from urllib.request import Request, urlopen
-import re
 
 local_dir = os.path.dirname(__file__)
 generated_resources_dir = os.path.join(local_dir, 'generated_resources')
@@ -32,7 +32,7 @@ class SiteMapper:
         os.makedirs(self.sitemaps_resources_dir, exist_ok=True)
 
     @staticmethod
-    def is_valid_uri(uri):
+    def is_valid_uri(uri: str) -> bool:
         try:
             result = urlparse(uri)
             return all([result.scheme, result.netloc])
@@ -53,7 +53,7 @@ class SiteMapper:
         url = url.encode('ascii', 'ignore').decode('ascii')
         return url if self.is_valid_uri(url) else ''
 
-    def get_links(self, url) -> None:
+    def get_links(self, url: str) -> None:
         print(f"Getting links from {url}")
         req = Request(url, headers={
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -74,7 +74,7 @@ class SiteMapper:
             href_url = ''.join(url)
             self.check_and_add_link(href_url)
 
-    def parse_rendered_html(self, soup) -> None:
+    def parse_rendered_html(self, soup: BeautifulSoup) -> None:
         for link in soup.find_all('a', href=True):
             href_url: str = link.get('href')
             href_match = self.match_url.match(href_url)
@@ -84,7 +84,7 @@ class SiteMapper:
                 href_url = href_match.group()
             self.check_and_add_link(href_url)
 
-    def check_and_add_link(self, link) -> None:
+    def check_and_add_link(self, link: str) -> None:
         complete_url = self.get_complete_url(link)
         if self.has_same_base_url(complete_url) and complete_url not in self.links:
             self.links.append(complete_url)
@@ -101,7 +101,7 @@ class SiteMapper:
         self.create_sitemap()
 
     @staticmethod
-    def print_progress_bar(index, total, label):
+    def print_progress_bar(index: int, total: int, label: str) -> None:
         bar_width = 50
         progress = index / total
         sys.stdout.write('\r')

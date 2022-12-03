@@ -6,15 +6,14 @@ from time import sleep
 from typing import List
 from urllib.error import HTTPError
 from urllib.parse import urlparse
-
-import xmltodict
 from urllib.request import Request, urlopen
 
+import xmltodict
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 local_dir = os.path.dirname(__file__)
 generated_resources_dir = os.path.join(local_dir, 'generated_resources')
@@ -32,7 +31,8 @@ class SiteSnapshooter:
         self.urls = self.get_urls_from_sitemap(self.sitemap)
         self.base_url = urlparse(self.urls[0]).netloc
         self.site_resource_dir = os.path.join(generated_resources_dir, self.base_url)
-        self.snapshot_dir = os.path.join(self.site_resource_dir, f'snapshot_{datetime.now().strftime("%Y_%m_%d__%H_%M_%S")}')
+        self.snapshot_dir = os.path.join(self.site_resource_dir,
+                                         f'snapshot_{datetime.now().strftime("%Y_%m_%d__%H_%M_%S")}')
         self.html_content_dir = os.path.join(self.snapshot_dir, 'html_content')
         self.screenshots_dir = os.path.join(self.snapshot_dir, 'screenshots')
         os.makedirs(self.screenshots_dir, exist_ok=True)
@@ -51,14 +51,14 @@ class SiteSnapshooter:
         return urls
 
     @staticmethod
-    def is_valid_uri(uri):
+    def is_valid_uri(uri: str) -> bool:
         try:
             result = urlparse(uri)
             return all([result.scheme, result.netloc])
         except ValueError:
             return False
 
-    def get_html_content(self, urls) -> None:
+    def get_html_content(self, urls: List[str]) -> None:
         for index, url in enumerate(urls):
             print(f"Getting HTML content from {url}")
             req = Request(url, headers={
@@ -115,7 +115,7 @@ class SiteSnapshooter:
         self.get_pages_screenshots(self.urls)
 
     @staticmethod
-    def print_progress_bar(index, total, label):
+    def print_progress_bar(index: int, total: int, label: str) -> None:
         bar_width = 50
         progress = index / total
         sys.stdout.write('\r')
