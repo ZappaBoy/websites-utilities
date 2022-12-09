@@ -1,7 +1,7 @@
 async-generator==1.10
 attrs==22.1.0
 beautifulsoup4==4.11.1
-certifi==2022.9.24
+certifi==2022.12.7
 cssselect==1.2.0
 exceptiongroup==1.0.4
 h11==0.14.0
